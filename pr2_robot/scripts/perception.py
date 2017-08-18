@@ -1,4 +1,4 @@
-+#!/usr/bin/env python
+#!/usr/bin/env python
 
 # Import modules
 import numpy as np
@@ -81,7 +81,7 @@ def pcl_callback(pcl_msg):
 
     # TODO: Extract inliers and outliers
     cloud_table = cloud_passthrough.extract(inliers,negative = False)
-    cloud_objects = cloud_passthrough.extract(outliers,negative = True)
+    cloud_objects = cloud_passthrough.extract(inliers,negative = True)
 
     # TODO: Euclidean Clustering
     white_cloud = XYZRGB_to_XYZ(cloud_objects)
@@ -89,9 +89,9 @@ def pcl_callback(pcl_msg):
 
     # TODO: Create Cluster-Mask Point Cloud to visualize each cluster separately
     ec = white_cloud.make_EuclideanClusterExtraction()
-    ec.setClusterTolerance(0.05)
-    ec.setMinClusterSize(50)
-    ec.setMaxClusterSize(500)
+    ec.set_ClusterTolerance(0.05)
+    ec.set_MinClusterSize(50)
+    ec.set_MaxClusterSize(500)
 
     ec.set_SearchMethod(tree)
 
@@ -115,7 +115,7 @@ def pcl_callback(pcl_msg):
     detected_objects_labels = []
     detected_objects = []
 
-    for index,pts_list in enumerate(cluster_indices)
+    for index,pts_list in enumerate(cluster_indices):
         # Grab the points for the cluster
         pcl_cluster = cloud_objects.extract(pts_list)
         ros_cluster = pcl_to_ros(pcl_cluster)
@@ -124,12 +124,12 @@ def pcl_callback(pcl_msg):
 
         chists = compute_color_histograms(ros_cluster, using_hsv=True)
         normals = get_normals(ros_cluster)
-		nhists = compute_normal_histograms(normals)
+        nhists = compute_normal_histograms(normals)
         feature = np.concatenate((chists, nhists))
 
         # Make the prediction
 
-		prediction = clf.predict(scaler.transform(feature.reshape(1,-1)))
+        prediction = clf.predict(scaler.transform(feature.reshape(1,-1)))
         label = encoder.inverse_transform(prediction)[0]
         detected_objects_labels.append(label)
         
@@ -200,14 +200,30 @@ def pr2_mover(object_list):
 if __name__ == '__main__':
 
     # TODO: ROS node initialization
+    rospy.init_node('clustering',anonymous = True)
 
     # TODO: Create Subscribers
+    pcl_sub = rospy.Subscriber("/pr2/world/points",pc2.PointCloud2,pcl_callback,queue_size=1)
 
     # TODO: Create Publishers
+    object_markers_pub=rospy.Publisher("/object_markers",Marker,queue_size=1)
+    detected_objects_pub=rospy.Publisher("/detected_objects",DetectedObjectsArray,queue_size=1)
+    pcl_objects_pub = rospy.Publisher("/pcl_objects", PointCloud2, queue_size=1)
+    pcl_table_pub = rospy.Publisher("/pcl_table", PointCloud2, queue_size=1)
+    pcl_cluster_pub = rospy.Publisher("/pcl_cluster", PointCloud2, queue_size=1)	
 
+    '''
     # TODO: Load Model From disk
+    model = pickle.load(open('model.sav', 'rb'))
+    clf = model['classifier']
+    encoder = LabelEncoder()
+    encoder.classes_ = model['classes']
+    scaler = model['scaler']
+	'''
 
-    # Initialize color_list
-    get_color_list.color_list = []
+	# Initialize color_list
+	#get_color_list.color_list = []
 
     # TODO: Spin while node is not shutdown
+    while not rospy.is_shutdown():
+    	rospy.spin()
