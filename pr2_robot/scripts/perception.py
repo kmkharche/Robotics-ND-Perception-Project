@@ -69,10 +69,10 @@ def pcl_callback(pcl_msg):
 
     # TODO: PassThrough Filter
     passthrough = cloud_vox.make_passthrough_filter()
-    filter_axis = 'z'
+    filter_axis = 'x'
     passthrough.set_filter_field_name(filter_axis)
     axis_min = 0
-    axis_max = 0.1
+    axis_max = 1
     passthrough.set_filter_limits(axis_min,axis_max)
     cloud_passthrough = passthrough.filter()
 
@@ -105,7 +105,7 @@ def pcl_callback(pcl_msg):
 
     # TODO: Convert PCL data to ROS messages
 
-    ros_cloud_table = pcl_to_ros(cloud_table)
+    ros_cloud_table = pcl_to_ros(cloud_passthrough)
     ros_cloud_objects = pcl_to_ros(cloud_objects)
 
     # TODO: Publish ROS messages
