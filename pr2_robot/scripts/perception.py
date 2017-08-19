@@ -56,8 +56,13 @@ def pcl_callback(pcl_msg):
     
     # TODO: Statistical Outlier Filtering
 
+    stat=pcl_cloud.make_statistical_outlier_filter()
+    stat.set_mean_k(50)
+    stat.set_std_dev_mul_thresh(1.0)
+    stat_cloud=stat.filter()
+
     # TODO: Voxel Grid Downsampling
-    vox = pcl_cloud.make_voxel_grid_filter()
+    vox = stat_cloud.make_voxel_grid_filter()
     leafSize = 0.01
     vox.set_leaf_size(leafSize,leafSize,leafSize)
     cloud_vox = vox.filter()
@@ -66,8 +71,8 @@ def pcl_callback(pcl_msg):
     passthrough = cloud_vox.make_passthrough_filter()
     filter_axis = 'z'
     passthrough.set_filter_field_name(filter_axis)
-    axis_min = 0.77
-    axis_max = 1
+    axis_min = 0
+    axis_max = 0.1
     passthrough.set_filter_limits(axis_min,axis_max)
     cloud_passthrough = passthrough.filter()
 
@@ -109,7 +114,7 @@ def pcl_callback(pcl_msg):
     pcl_table_pub.publish(ros_cloud_table)
 
 # Exercise-3 TODOs:
-
+'''
     # Classify the clusters! (loop through each detected cluster one at a time)
 
     detected_objects_labels = []
@@ -194,7 +199,7 @@ def pr2_mover(object_list):
             print "Service call failed: %s"%e
 
     # TODO: Output your request parameters into output yaml file
-
+'''
 
 
 if __name__ == '__main__':
