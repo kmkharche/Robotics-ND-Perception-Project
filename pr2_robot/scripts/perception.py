@@ -57,8 +57,8 @@ def pcl_callback(pcl_msg):
     # TODO: Statistical Outlier Filtering
 
     stat=pcl_cloud.make_statistical_outlier_filter()
-    stat.set_mean_k(50)
-    stat.set_std_dev_mul_thresh(1.0)
+    stat.set_mean_k(10)
+    stat.set_std_dev_mul_thresh(0.1)
     stat_cloud=stat.filter()
 
     # TODO: Voxel Grid Downsampling
@@ -139,7 +139,7 @@ def pcl_callback(pcl_msg):
     pcl_cluster_pub.publish(ros_cluster_cloud)
 
 # Exercise-3 TODOs:
-'''
+
     # Classify the clusters! (loop through each detected cluster one at a time)
 
     detected_objects_labels = []
@@ -183,15 +183,18 @@ def pcl_callback(pcl_msg):
     # Suggested location for where to invoke your pr2_mover() function within pcl_callback()
     # Could add some logic to determine whether or not your object detections are robust
     # before calling pr2_mover()
+    '''
     try:
-        pr2_mover(detected_objects_list)
+        pr2_mover(detected_objects)
     except rospy.ROSInterruptException:
         pass
+    '''
 
 # function to load parameters and request PickPlace service
 def pr2_mover(object_list):
 
     # TODO: Initialize variables
+    
 
     # TODO: Get/Read parameters
 
@@ -224,7 +227,7 @@ def pr2_mover(object_list):
             print "Service call failed: %s"%e
 
     # TODO: Output your request parameters into output yaml file
-'''
+
 
 
 if __name__ == '__main__':
@@ -242,14 +245,14 @@ if __name__ == '__main__':
     pcl_table_pub = rospy.Publisher("/pcl_table", PointCloud2, queue_size=1)
     pcl_cluster_pub = rospy.Publisher("/pcl_cluster", PointCloud2, queue_size=1)	
 
-    '''
+    
     # TODO: Load Model From disk
     model = pickle.load(open('model.sav', 'rb'))
     clf = model['classifier']
     encoder = LabelEncoder()
     encoder.classes_ = model['classes']
     scaler = model['scaler']
-    '''
+    
 
     get_color_list.color_list=[]
     # TODO: Spin while node is not shutdown
