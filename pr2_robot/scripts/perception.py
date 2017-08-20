@@ -69,12 +69,20 @@ def pcl_callback(pcl_msg):
 
     # TODO: PassThrough Filter
     passthrough = cloud_vox.make_passthrough_filter()
-    filter_axis = 'x'
+    filter_axis = 'z'
     passthrough.set_filter_field_name(filter_axis)
-    axis_min = 0
-    axis_max = 1
+    axis_min = 0.2
+    axis_max = 10
     passthrough.set_filter_limits(axis_min,axis_max)
-    cloud_passthrough = passthrough.filter()
+    temp_passthrough=passthrough.filter()
+    passthrough2 = temp_passthrough.make_passthrough_filter()
+    filter_axis = 'x'
+    passthrough2.set_filter_field_name(filter_axis)
+    axis_min = 0.4
+    axis_max = 0.8
+    passthrough2.set_filter_limits(axis_min,axis_max)
+    cloud_passthrough = passthrough2.filter()
+    #cloud_passthrough = passthrough.filter()
 
     # TODO: RANSAC Plane Segmentation
     segmented = cloud_passthrough.make_segmenter()
@@ -105,7 +113,7 @@ def pcl_callback(pcl_msg):
 
     # TODO: Convert PCL data to ROS messages
 
-    ros_cloud_table = pcl_to_ros(cloud_passthrough)
+    ros_cloud_table = pcl_to_ros(cloud_table)
     ros_cloud_objects = pcl_to_ros(cloud_objects)
 
     # TODO: Publish ROS messages
