@@ -196,6 +196,7 @@ def pr2_mover(object_list):
     object_list_param=[]
     labels=[]
     centroids=[]
+    points_arr=[]
     dict_list=[]
     
     # TODO: Get/Read parameters
@@ -206,22 +207,25 @@ def pr2_mover(object_list):
     # TODO: Rotate PR2 in place to capture side tables for the collision map
 
     # TODO: Loop through the pick list
-    for object in object_list:
+    for object in object_list_param:
 
-    	labels.append(object.label)
-    	i=0
-    	for i in range(len(object_list_param)):
-    		if (object_list_param[i]['name']==object.label):
+    	#labels.append(object.label)
+    	labels.append(object['name'])
+        i=0
+    	for i in range(len(object_list)):
+    		if (object['name']==object_list[i].label):
     			break
 
     	test_scene_num=Int32()
-        test_scene_num.data=1
+        #test_scene_num.data=1
+        #test_scene_num.data=2
+        test_scene_num.data=3
         object_name=String()
-        object_name.data=object_list_param[i]['name']
-        object_group=object_list_param[i]['group']
+        object_name.data=object['name']
+        object_group=object['group']
 
         # TODO: Get the PointCloud for a given object and obtain it's centroid
-    	points_arr=ros_to_pcl(object.cloud).to_array()
+    	points_arr=ros_to_pcl(object_list[i].cloud).to_array()
     	centroids.append(np.mean(points_arr,axis=0)[:3])
 
     	pick_pose=Pose()
@@ -238,7 +242,6 @@ def pr2_mover(object_list):
         place_pose.position.x=place_pose_param[j]['position'][0]
         place_pose.position.y=place_pose_param[j]['position'][1]
         place_pose.position.z=place_pose_param[j]['position'][2]
-        print (place_pose)
 
         # TODO: Assign the arm to be used for pick_place
 
@@ -266,7 +269,7 @@ def pr2_mover(object_list):
             print "Service call failed: %s"%e
 
     # TODO: Output your request parameters into output yaml file
-    send_to_yaml('dictionary.yaml',dict_list)
+    send_to_yaml('output3.yaml',dict_list)
 
 
 if __name__ == '__main__':
