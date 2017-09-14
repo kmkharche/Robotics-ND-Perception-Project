@@ -104,7 +104,7 @@ def pcl_callback(pcl_msg):
     ec = white_cloud.make_EuclideanClusterExtraction()
     ec.set_ClusterTolerance(0.05)
     ec.set_MinClusterSize(50)
-    ec.set_MaxClusterSize(500)
+    ec.set_MaxClusterSize(800)
 
     ec.set_SearchMethod(tree)
 
